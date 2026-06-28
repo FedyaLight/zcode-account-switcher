@@ -4,6 +4,7 @@ import ZCodeAccountSwitcherCore
 struct AccountCardView: View {
     var account: AccountRecord
     var isActive: Bool
+    var hidesPrivateAccountData: Bool
     var onSwitch: () -> Void
     var onDelete: () -> Void
     var onRename: (String) -> Void
@@ -14,12 +15,14 @@ struct AccountCardView: View {
     init(
         account: AccountRecord,
         isActive: Bool,
+        hidesPrivateAccountData: Bool,
         onSwitch: @escaping () -> Void,
         onDelete: @escaping () -> Void,
         onRename: @escaping (String) -> Void
     ) {
         self.account = account
         self.isActive = isActive
+        self.hidesPrivateAccountData = hidesPrivateAccountData
         self.onSwitch = onSwitch
         self.onDelete = onDelete
         self.onRename = onRename
@@ -30,6 +33,12 @@ struct AccountCardView: View {
             header
             healthRow
             actions
+        }
+        .onChange(of: hidesPrivateAccountData) { isHidden in
+            if isHidden {
+                isEditing = false
+                draftName = ""
+            }
         }
         .padding(16)
         .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
@@ -56,7 +65,9 @@ struct AccountCardView: View {
                         Text(account.meta.displayName)
                             .font(.headline)
                             .lineLimit(1)
+                            .privacyBlurred(hidesPrivateAccountData)
                             .onTapGesture {
+                                guard !hidesPrivateAccountData else { return }
                                 draftName = account.meta.displayName
                                 isEditing = true
                             }
@@ -67,15 +78,17 @@ struct AccountCardView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .privacyBlurred(hidesPrivateAccountData)
             }
 
             Spacer(minLength: 0)
 
             VStack(alignment: .trailing, spacing: 6) {
-                Badge(text: account.meta.provider ?? "ZAI", tint: .secondary)
+                Badge(text: account.meta.provider ?? "ZAI", tint: .secondary, blursContent: hidesPrivateAccountData)
                 Text(account.id)
                     .font(.caption2.monospaced())
                     .foregroundStyle(.tertiary)
+                    .privacyBlurred(hidesPrivateAccountData, radius: 3)
             }
         }
     }
@@ -93,6 +106,7 @@ struct AccountCardView: View {
             Text(initials)
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(.primary)
+                .privacyBlurred(hidesPrivateAccountData, radius: 3)
         }
         .frame(width: 42, height: 42)
     }

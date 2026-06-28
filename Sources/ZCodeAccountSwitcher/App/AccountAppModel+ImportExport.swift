@@ -24,7 +24,7 @@ extension AccountAppModel {
                 showToast(.success, "Exported \(payload.accounts.count) account\(payload.accounts.count == 1 ? "" : "s").")
             }
         } catch {
-            showToast(.error, error.localizedDescription)
+            showToast(.error, privacySafeErrorMessage(for: error))
         }
     }
 
@@ -79,12 +79,14 @@ extension AccountAppModel {
                     totalImported += result.imported.count
                     totalUpdated += result.updated.count
                     totalSkipped += result.skipped.count
-                    if let skipped = result.skipped.first {
+                    if !hidesPrivateAccountData, let skipped = result.skipped.first {
                         failureMessages.append("\(skipped.id ?? url.lastPathComponent): \(skipped.reason)")
                     }
                 } catch {
                     totalSkipped += 1
-                    failureMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
+                    if !hidesPrivateAccountData {
+                        failureMessages.append("\(url.lastPathComponent): \(error.localizedDescription)")
+                    }
                 }
             }
             await reloadStatusAndList()

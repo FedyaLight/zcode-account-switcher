@@ -4,6 +4,7 @@ import ZCodeAccountSwitcherCore
 struct AccountListRowView: View {
     var account: AccountRecord
     var isActive: Bool
+    var hidesPrivateAccountData: Bool
     var onSwitch: () -> Void
     var onDelete: () -> Void
     var onRename: (String) -> Void
@@ -14,12 +15,14 @@ struct AccountListRowView: View {
     init(
         account: AccountRecord,
         isActive: Bool,
+        hidesPrivateAccountData: Bool,
         onSwitch: @escaping () -> Void,
         onDelete: @escaping () -> Void,
         onRename: @escaping (String) -> Void
     ) {
         self.account = account
         self.isActive = isActive
+        self.hidesPrivateAccountData = hidesPrivateAccountData
         self.onSwitch = onSwitch
         self.onDelete = onDelete
         self.onRename = onRename
@@ -44,7 +47,9 @@ struct AccountListRowView: View {
                         Text(account.meta.displayName)
                             .font(.callout.weight(.medium))
                             .lineLimit(1)
+                            .privacyBlurred(hidesPrivateAccountData)
                             .onTapGesture {
+                                guard !hidesPrivateAccountData else { return }
                                 draftName = account.meta.displayName
                                 isEditing = true
                             }
@@ -55,6 +60,7 @@ struct AccountListRowView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .privacyBlurred(hidesPrivateAccountData)
             }
             .frame(minWidth: 180, maxWidth: .infinity, alignment: .leading)
 
@@ -74,7 +80,7 @@ struct AccountListRowView: View {
                 .foregroundStyle(.tertiary)
                 .frame(width: 52, alignment: .trailing)
 
-            Badge(text: account.meta.provider ?? "ZAI", tint: .secondary)
+            Badge(text: account.meta.provider ?? "ZAI", tint: .secondary, blursContent: hidesPrivateAccountData)
                 .frame(width: 54, alignment: .trailing)
 
             primaryAction
@@ -97,6 +103,12 @@ struct AccountListRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(isActive ? Color.green.opacity(0.45) : Color.primary.opacity(0.08), lineWidth: isActive ? 1.2 : 1)
         )
+        .onChange(of: hidesPrivateAccountData) { isHidden in
+            if isHidden {
+                isEditing = false
+                draftName = ""
+            }
+        }
     }
 
     private var avatar: some View {
@@ -112,6 +124,7 @@ struct AccountListRowView: View {
             Text(initials)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.primary)
+                .privacyBlurred(hidesPrivateAccountData, radius: 3)
         }
         .frame(width: 32, height: 32)
     }

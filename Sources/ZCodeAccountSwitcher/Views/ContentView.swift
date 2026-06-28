@@ -67,6 +67,15 @@ struct ContentView: View {
             Spacer()
 
             Button {
+                model.hidesPrivateAccountData.toggle()
+            } label: {
+                Image(systemName: model.hidesPrivateAccountData ? "eye.slash" : "eye")
+                    .frame(width: 18, height: 18)
+            }
+            .help(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
+            .accessibilityLabel(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
+
+            Button {
                 Task { await model.refresh() }
             } label: {
                 Label("Refresh", systemImage: "arrow.clockwise")
@@ -114,7 +123,8 @@ struct ContentView: View {
                 value: model.status.current?.label ?? "Not recognized",
                 detail: [model.status.current?.email, model.status.current?.provider].compactMap { $0 }.joined(separator: " · "),
                 systemImage: "person.crop.circle",
-                tint: .blue
+                tint: .blue,
+                blursContent: model.hidesPrivateAccountData && model.status.current != nil
             )
             OverviewCard(
                 title: "Saved Accounts",
@@ -219,6 +229,7 @@ struct ContentView: View {
         AccountCardView(
             account: account,
             isActive: account.id == model.currentAccountId,
+            hidesPrivateAccountData: model.hidesPrivateAccountData,
             onSwitch: { Task { await model.switchToAccount(account) } },
             onDelete: { model.showingDeleteConfirmation = account },
             onRename: { label in Task { await model.renameAccount(account, label: label) } }
@@ -229,6 +240,7 @@ struct ContentView: View {
         AccountListRowView(
             account: account,
             isActive: account.id == model.currentAccountId,
+            hidesPrivateAccountData: model.hidesPrivateAccountData,
             onSwitch: { Task { await model.switchToAccount(account) } },
             onDelete: { model.showingDeleteConfirmation = account },
             onRename: { label in Task { await model.renameAccount(account, label: label) } }

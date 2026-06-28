@@ -54,7 +54,7 @@ extension AccountAppModel {
             let result = try await oauthService.finishLogin(tokenSet: tokenSet, label: session.label, overwrite: true)
             oauthSession = nil
             showingAddSheet = false
-            showToast(.success, "Added \(result.meta.displayName).")
+            showToast(.success, hidesPrivateAccountData ? "Added account." : "Added \(result.meta.displayName).")
             await reloadStatusAndList()
         }
     }
@@ -77,6 +77,6 @@ extension AccountAppModel {
         oauthCallbackServer?.stop()
         oauthCallbackServer = nil
         oauthSession = nil
-        showToast(.error, error.localizedDescription)
+        showToast(.error, privacySafeErrorMessage(for: error))
     }
 }

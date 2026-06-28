@@ -25,6 +25,7 @@
 		3B747CFBD23857E557CC83A3 /* libZCodeAccountSwitcherCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 978835DC94FC0B6B6DF410B1 /* libZCodeAccountSwitcherCore.a */; };
 		3D18BDC1D2D1F101DBAAA9BF /* AccountViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6BE07082A39F16E5556D5E /* AccountViewMode.swift */; };
 		403E6B668E6B63751460CA0D /* QuotaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93330676E9FE3D67D2C2758F /* QuotaModels.swift */; };
+		46F54667208EC93BFC4E0134 /* PrivacyBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BE78B7BFBD2F853EFA13BD /* PrivacyBlur.swift */; };
 		4B7392E049EDB9D2045434AC /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7531A77B084FCD3EFD66C8CB /* OAuthService.swift */; };
 		4D268DFF899FF0AB63F193A4 /* AccountAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71B2E7E4339581F3F6E968F /* AccountAppState.swift */; };
 		57C47CE9162FA6B7F21A7518 /* AccountModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EF1F85A04815372CFF5AD7 /* AccountModels.swift */; };
@@ -95,6 +96,7 @@
 		4E8B7E4FB8EFE9DFA88EBC48 /* TimeSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSupport.swift; sourceTree = "<group>"; };
 		4ED8C13849297CB9BAB3DCD3 /* AddMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMode.swift; sourceTree = "<group>"; };
 		5210E0D53A752A284D52C598 /* OAuthModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthModels.swift; sourceTree = "<group>"; };
+		52BE78B7BFBD2F853EFA13BD /* PrivacyBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyBlur.swift; sourceTree = "<group>"; };
 		5C0C9548A0F746A47D6E80C2 /* OverviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCard.swift; sourceTree = "<group>"; };
 		7531A77B084FCD3EFD66C8CB /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
 		814CA2FF346D9DABB7264541 /* ZCodeProviderRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZCodeProviderRouting.swift; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				8462C4707B699A61F3B91BF5 /* ContentView.swift */,
 				8818594BC2EB0D889620F966 /* EmptyStateView.swift */,
 				5C0C9548A0F746A47D6E80C2 /* OverviewCard.swift */,
+				52BE78B7BFBD2F853EFA13BD /* PrivacyBlur.swift */,
 				0F8DBBF2362BE605FFE08E61 /* SearchField.swift */,
 				A86255AF6CB8ADFB54608203 /* StatusPill.swift */,
 				D299AEDC92EF3DAEB21C4EAD /* ToastView.swift */,
@@ -457,6 +460,7 @@
 				C40559872AD17FFCAB4F0F83 /* ContentView.swift in Sources */,
 				ACDA338D7A1D8AA56AF9762D /* EmptyStateView.swift in Sources */,
 				980752B938D54C49E303961B /* OverviewCard.swift in Sources */,
+				46F54667208EC93BFC4E0134 /* PrivacyBlur.swift in Sources */,
 				C774897DAE5FFC75BCE22F7A /* SearchField.swift in Sources */,
 				784B3BFFEE4F4AFA67D91375 /* StatusPill.swift in Sources */,
 				6DF0E616A9BBD32EB6A37E3D /* ToastView.swift in Sources */,

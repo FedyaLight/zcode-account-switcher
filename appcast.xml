@@ -8,15 +8,15 @@
     <description>Release feed for ZCode Account Switcher.</description>
     <language>en</language>
     <item>
-      <title>Version 1.0.3</title>
-      <sparkle:releaseNotesLink>https://github.com/FedyaLight/zcode-account-switcher/releases/tag/v1.0.3</sparkle:releaseNotesLink>
-      <pubDate>Sun, 28 Jun 2026 16:19:58 +0000</pubDate>
+      <title>Version 1.0.4</title>
+      <sparkle:releaseNotesLink>https://github.com/FedyaLight/zcode-account-switcher/releases/tag/v1.0.4</sparkle:releaseNotesLink>
+      <pubDate>Sun, 28 Jun 2026 19:42:53 +0000</pubDate>
       <enclosure
-        url="https://github.com/FedyaLight/zcode-account-switcher/releases/download/v1.0.3/ZCodeAccountSwitcher-1.0.3-macOS.dmg"
-        sparkle:version="4"
-        sparkle:shortVersionString="1.0.3"
-        sparkle:edSignature="dFtv75Q5SMxqJvGsdNTUMSO58vQa7u4EKpDMdz48XpDfFiU2mTdvpO5S3/v2qzQRPsuhXuV6E03fjiAwWCf3BQ=="
-        length="3540396"
+        url="https://github.com/FedyaLight/zcode-account-switcher/releases/download/v1.0.4/ZCodeAccountSwitcher-1.0.4-macOS.dmg"
+        sparkle:version="5"
+        sparkle:shortVersionString="1.0.4"
+        sparkle:edSignature="0isQ+PMUStE6nJNGi5gTtCRPwIfjNUE9NcLPcUnMobPAfzqBG9sLjvzuSDLP1d8GmQLv9PJv2RZtp6nzIal8BA=="
+        length="3573894"
         type="application/octet-stream" />
     </item>
   </channel>

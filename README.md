@@ -17,6 +17,10 @@ snapshots, and swaps the active snapshot back into ZCode when you switch
 accounts. It is intentionally macOS-only and built with SwiftUI, SwiftPM, and
 XcodeGen.
 
+<p align="center">
+  <img src="docs/screenshot.png" width="920" alt="ZCode Account Switcher with private account details hidden">
+</p>
+
 ## What It Does
 
 - Captures the current ZCode login files as a local account snapshot.
@@ -25,6 +29,7 @@ XcodeGen.
   login files atomically, and relaunching ZCode.
 - Supports rollback to the previous login state.
 - Supports OAuth-based account capture and local import/export.
+- Blurs private account details in the UI when privacy mode is enabled.
 
 ## Important Data Notes
 

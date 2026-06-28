@@ -4,6 +4,8 @@ import ZCodeAccountSwitcherCore
 
 @MainActor
 final class AccountAppModel: ObservableObject {
+    private static let hidesPrivateAccountDataKey = "hidesPrivateAccountData"
+
     @Published var accounts: [AccountRecord] = []
     @Published var status = AppStatus(current: nil, zcodeRunning: false, hasLastBackup: false)
     @Published var isLoading = false
@@ -13,6 +15,11 @@ final class AccountAppModel: ObservableObject {
     @Published var showingAddSheet = false
     @Published var showingDeleteConfirmation: AccountRecord?
     @Published var oauthSession: OAuthSession?
+    @Published var hidesPrivateAccountData: Bool {
+        didSet {
+            UserDefaults.standard.set(hidesPrivateAccountData, forKey: Self.hidesPrivateAccountDataKey)
+        }
+    }
 
     let store: AccountStore
     var activeImportPanel: NSOpenPanel?
@@ -20,6 +27,7 @@ final class AccountAppModel: ObservableObject {
     var oauthCallbackServer: OAuthCallbackServer?
 
     init(store: AccountStore = AccountStore()) {
+        hidesPrivateAccountData = UserDefaults.standard.bool(forKey: Self.hidesPrivateAccountDataKey)
         self.store = store
     }
 
@@ -63,7 +71,7 @@ final class AccountAppModel: ObservableObject {
         do {
             accounts = try store.list()
         } catch {
-            showToast(.error, error.localizedDescription)
+            showToast(.error, privacySafeErrorMessage(for: error))
         }
     }
 
@@ -71,9 +79,9 @@ final class AccountAppModel: ObservableObject {
         await runBusy {
             let result = try store.capture(label: label, overwrite: false)
             if result.created {
-                showToast(.success, "Captured \(result.meta.displayName).")
+                showToast(.success, hidesPrivateAccountData ? "Captured account." : "Captured \(result.meta.displayName).")
             } else {
-                showToast(.info, result.message ?? "Account already exists.")
+                showToast(.info, hidesPrivateAccountData ? "Account already exists." : result.message ?? "Account already exists.")
             }
             await reloadStatusAndList()
         }
@@ -82,7 +90,8 @@ final class AccountAppModel: ObservableObject {
     func switchToAccount(_ account: AccountRecord) async {
         await runBusy {
             _ = try await store.use(id: account.id, restart: false, force: true)
-            showToast(.success, "Switched to \(account.meta.displayName). Launch ZCode manually.")
+            let accountText = hidesPrivateAccountData ? "account" : account.meta.displayName
+            showToast(.success, "Switched to \(accountText). Launch ZCode manually.")
             await reloadStatusAndList()
         }
     }
@@ -90,7 +99,7 @@ final class AccountAppModel: ObservableObject {
     func deleteAccount(_ account: AccountRecord) async {
         await runBusy {
             _ = try store.remove(id: account.id)
-            showToast(.success, "Deleted \(account.meta.displayName).")
+            showToast(.success, hidesPrivateAccountData ? "Deleted account." : "Deleted \(account.meta.displayName).")
             await reloadStatusAndList()
         }
     }
@@ -100,7 +109,7 @@ final class AccountAppModel: ObservableObject {
             _ = try store.rename(id: account.id, label: label)
             await reloadStatusAndList()
         } catch {
-            showToast(.error, error.localizedDescription)
+            showToast(.error, privacySafeErrorMessage(for: error))
         }
     }
 
@@ -129,8 +138,12 @@ final class AccountAppModel: ObservableObject {
         do {
             try await operation()
         } catch {
-            showToast(.error, error.localizedDescription)
+            showToast(.error, privacySafeErrorMessage(for: error))
         }
+    }
+
+    func privacySafeErrorMessage(for error: Error) -> String {
+        hidesPrivateAccountData ? "The operation failed." : error.localizedDescription
     }
 
     static func randomState() -> String {

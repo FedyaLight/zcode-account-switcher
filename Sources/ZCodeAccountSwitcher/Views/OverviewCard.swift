@@ -6,6 +6,7 @@ struct OverviewCard: View {
     var detail: String
     var systemImage: String
     var tint: Color
+    var blursContent = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -22,10 +23,12 @@ struct OverviewCard: View {
                 Text(value)
                     .font(.headline)
                     .lineLimit(1)
+                    .privacyBlurred(blursContent)
                 Text(detail.isEmpty ? " " : detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .privacyBlurred(blursContent)
             }
             Spacer(minLength: 0)
         }
