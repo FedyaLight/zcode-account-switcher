@@ -12,13 +12,10 @@ struct ContentView: View {
                 header
                 Divider()
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        overview
-                        accountSections
-                    }
-                    .padding(24)
-                    .frame(maxWidth: 1080)
-                    .frame(maxWidth: .infinity)
+                    accountSections
+                        .padding(24)
+                        .frame(maxWidth: 1080)
+                        .frame(maxWidth: .infinity)
                 }
             }
             .background(Color(nsColor: .windowBackgroundColor))
@@ -67,20 +64,13 @@ struct ContentView: View {
             Spacer()
 
             Button {
-                model.hidesPrivateAccountData.toggle()
-            } label: {
-                Image(systemName: model.hidesPrivateAccountData ? "eye.slash" : "eye")
-                    .frame(width: 18, height: 18)
-            }
-            .help(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
-            .accessibilityLabel(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
-
-            Button {
                 Task { await model.refresh() }
             } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                Image(systemName: "arrow.clockwise")
+                    .frame(width: 18, height: 18)
             }
             .help("Refresh")
+            .accessibilityLabel("Refresh")
 
             Button {
                 model.presentImportPanel()
@@ -97,14 +87,6 @@ struct ContentView: View {
             .help("Export")
 
             Button {
-                Task { await model.rollback() }
-            } label: {
-                Label("Rollback", systemImage: "arrow.uturn.backward")
-            }
-            .disabled(!model.status.hasLastBackup)
-            .help("Rollback")
-
-            Button {
                 model.showingAddSheet = true
             } label: {
                 Label("Add Account", systemImage: "plus")
@@ -116,42 +98,14 @@ struct ContentView: View {
         .background(.bar)
     }
 
-    private var overview: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 12)], spacing: 12) {
-            OverviewCard(
-                title: "Current Account",
-                value: model.status.current?.label ?? "Not recognized",
-                detail: [model.status.current?.email, model.status.current?.provider].compactMap { $0 }.joined(separator: " · "),
-                systemImage: "person.crop.circle",
-                tint: .blue,
-                blursContent: model.hidesPrivateAccountData && model.status.current != nil
-            )
-            OverviewCard(
-                title: "Saved Accounts",
-                value: "\(model.accounts.count)",
-                detail: "Snapshots in Application Support",
-                systemImage: "person.2",
-                tint: .green
-            )
-            OverviewCard(
-                title: "Backup",
-                value: model.status.hasLastBackup ? "Available" : "None",
-                detail: model.status.hasLastBackup ? "Rollback can restore the previous state" : "A backup is created before switching",
-                systemImage: "clock.arrow.circlepath",
-                tint: model.status.hasLastBackup ? .purple : .secondary
-            )
-        }
-    }
-
     private var accountSections: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 12) {
                 Text("Accounts")
                     .font(.title2.weight(.semibold))
                 Spacer()
+                privacyButton
                 ViewModeControl(selection: $accountViewMode)
-                SearchField(text: $model.searchText)
-                    .frame(width: 280)
             }
 
             if model.isLoading {
@@ -163,7 +117,7 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, minHeight: 300)
             } else {
-                if let active = model.activeAccount, model.searchText.isEmpty {
+                if let active = model.activeAccount {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Active")
                             .font(.subheadline.weight(.semibold))
@@ -173,14 +127,14 @@ struct ContentView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(model.searchText.isEmpty ? "Other Accounts" : "Results")
+                    Text("Other Accounts (\(model.otherAccounts.count))")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.secondary)
 
                     otherAccountsView
 
                     if model.otherAccounts.isEmpty {
-                        Text("No matching accounts.")
+                        Text("No other accounts.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, minHeight: 120)
@@ -188,6 +142,17 @@ struct ContentView: View {
                 }
             }
         }
+    }
+
+    private var privacyButton: some View {
+        Button {
+            model.hidesPrivateAccountData.toggle()
+        } label: {
+            Image(systemName: model.hidesPrivateAccountData ? "eye.slash" : "eye")
+                .frame(width: 18, height: 18)
+        }
+        .help(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
+        .accessibilityLabel(model.hidesPrivateAccountData ? "Show account data" : "Hide account data")
     }
 
     private var deleteBinding: Binding<Bool> {

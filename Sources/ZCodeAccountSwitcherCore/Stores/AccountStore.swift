@@ -21,8 +21,7 @@ public final class AccountStore {
     public func status() -> AppStatus {
         AppStatus(
             current: fingerprintExtractor.currentFingerprint(),
-            zcodeRunning: processService.isRunning(),
-            hasLastBackup: hasLastBackup()
+            zcodeRunning: processService.isRunning()
         )
     }
 
@@ -144,36 +143,6 @@ public final class AccountStore {
         }
         try JSONSupport.writeEncodable(meta, to: url, pretty: true)
         return meta
-    }
-
-    public func rollback(restart: Bool = true, force: Bool = true) async throws -> SwitchResult {
-        let credentialsBackup = paths.lastBackupDirectory.appendingPathComponent("credentials.json")
-        let configBackup = paths.lastBackupDirectory.appendingPathComponent("config.json")
-        guard FileManager.default.fileExists(atPath: credentialsBackup.path),
-              FileManager.default.fileExists(atPath: configBackup.path)
-        else {
-            throw AccountError.missingLoginState("No .last backup exists.")
-        }
-
-        if processService.isRunning(), !force {
-            throw AccountError.zcodeStillRunning
-        }
-        if processService.isRunning() {
-            let ok = await processService.closeZCode()
-            guard ok else { throw AccountError.zcodeCloseTimeout }
-        }
-
-        try writeSnapshotExact(AccountSnapshot(
-            credentials: String(contentsOf: credentialsBackup, encoding: .utf8),
-            config: String(contentsOf: configBackup, encoding: .utf8)
-        ))
-        try restoreLastSettingIfPresent()
-
-        var launched = false
-        if restart {
-            launched = (try? await processService.launchZCode()) ?? false
-        }
-        return SwitchResult(restarted: launched)
     }
 
     public func exportAccounts(ids: [String]? = nil) throws -> AccountsExportPayload {
@@ -366,11 +335,6 @@ public final class AccountStore {
         }
         try FileManager.default.createDirectory(at: paths.settingFile.deletingLastPathComponent(), withIntermediateDirectories: true)
         try JSONSupport.atomicWrite(Data(contentsOf: backup), to: paths.settingFile)
-    }
-
-    private func hasLastBackup() -> Bool {
-        FileManager.default.fileExists(atPath: paths.lastBackupDirectory.appendingPathComponent("credentials.json").path) &&
-        FileManager.default.fileExists(atPath: paths.lastBackupDirectory.appendingPathComponent("config.json").path)
     }
 
     private func ensureStore() throws {

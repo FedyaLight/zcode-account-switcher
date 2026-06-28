@@ -38,11 +38,6 @@ struct ZCodeAccountSwitcherApp: App {
                     Task { await model.refresh() }
                 }
                 .keyboardShortcut("r")
-
-                Button("Rollback") {
-                    Task { await model.rollback() }
-                }
-                .disabled(!model.status.hasLastBackup)
             }
         }
     }

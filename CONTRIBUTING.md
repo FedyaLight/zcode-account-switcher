@@ -14,7 +14,7 @@ xcodebuild test \
   -destination 'platform=macOS'
 ```
 
-Do not commit local account data, rollback backups, `.build`, `dist`, Xcode user
+Do not commit local account data, switch backups, `.build`, `dist`, Xcode user
 state, logs, exported snapshots, or environment files.
 
 `project.yml` is the source of truth for the Xcode project. Regenerate

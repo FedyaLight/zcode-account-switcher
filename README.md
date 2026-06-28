@@ -27,7 +27,6 @@ XcodeGen.
 - Lists saved accounts with basic health information.
 - Switches accounts by closing ZCode, backing up the current state, replacing the
   login files atomically, and relaunching ZCode.
-- Supports rollback to the previous login state.
 - Supports OAuth-based account capture and local import/export.
 - Blurs private account details in the UI when privacy mode is enabled.
 
@@ -42,7 +41,7 @@ The app reads and writes these ZCode files:
 - `~/.zcode/v2/setting.json`
 - `~/.zcode/v2/coding-plan-cache.json`
 
-Saved snapshots and rollback backups are stored under:
+Saved snapshots and switch backups are stored under:
 
 - `~/Library/Application Support/ZCode Account Switcher/accounts`
 - `~/Library/Application Support/ZCode Account Switcher/.last`

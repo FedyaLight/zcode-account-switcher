@@ -7,10 +7,9 @@ final class AccountAppModel: ObservableObject {
     private static let hidesPrivateAccountDataKey = "hidesPrivateAccountData"
 
     @Published var accounts: [AccountRecord] = []
-    @Published var status = AppStatus(current: nil, zcodeRunning: false, hasLastBackup: false)
+    @Published var status = AppStatus(current: nil, zcodeRunning: false)
     @Published var isLoading = false
     @Published var isBusy = false
-    @Published var searchText = ""
     @Published var toast: ToastMessage?
     @Published var showingAddSheet = false
     @Published var showingDeleteConfirmation: AccountRecord?
@@ -31,22 +30,6 @@ final class AccountAppModel: ObservableObject {
         self.store = store
     }
 
-    var filteredAccounts: [AccountRecord] {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard !query.isEmpty else { return accounts }
-        return accounts.filter { record in
-            [
-                record.meta.displayName,
-                record.meta.email,
-                record.meta.name,
-                record.meta.provider,
-                record.id
-            ]
-            .compactMap { $0?.lowercased() }
-            .contains { $0.contains(query) }
-        }
-    }
-
     var currentAccountId: String? {
         status.current?.emailShortId.isEmpty == false ? status.current?.emailShortId : status.current?.shortId
     }
@@ -57,7 +40,7 @@ final class AccountAppModel: ObservableObject {
     }
 
     var otherAccounts: [AccountRecord] {
-        filteredAccounts.filter { $0.id != currentAccountId }
+        accounts.filter { $0.id != currentAccountId }
     }
 
     func refresh() async {
@@ -110,15 +93,6 @@ final class AccountAppModel: ObservableObject {
             await reloadStatusAndList()
         } catch {
             showToast(.error, privacySafeErrorMessage(for: error))
-        }
-    }
-
-    func rollback() async {
-        await runBusy {
-            let result = try await store.rollback(restart: true, force: true)
-            let restartText = result.restarted ? "ZCode restarted." : "Login state restored. Launch ZCode manually."
-            showToast(.success, "Rolled back to previous login state. \(restartText)")
-            await reloadStatusAndList()
         }
     }
 

@@ -184,11 +184,9 @@ public struct AccountFingerprint: Codable, Equatable {
 public struct AppStatus: Equatable {
     public var current: AccountFingerprint?
     public var zcodeRunning: Bool
-    public var hasLastBackup: Bool
 
-    public init(current: AccountFingerprint?, zcodeRunning: Bool, hasLastBackup: Bool) {
+    public init(current: AccountFingerprint?, zcodeRunning: Bool) {
         self.current = current
         self.zcodeRunning = zcodeRunning
-        self.hasLastBackup = hasLastBackup
     }
 }
