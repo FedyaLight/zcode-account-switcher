@@ -1,8 +1,14 @@
-# ZCode Account Switcher for macOS
+<p align="center">
+  <img src="Resources/ZCodeAccountSwitcher.png" width="112" height="112" alt="ZCode Account Switcher app icon">
+</p>
 
-[![CI](https://github.com/FedyaLight/zcode-account-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/FedyaLight/zcode-account-switcher/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/FedyaLight/zcode-account-switcher?include_prereleases)](https://github.com/FedyaLight/zcode-account-switcher/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<h1 align="center">ZCode Account Switcher for macOS</h1>
+
+<p align="center">
+  <a href="https://github.com/FedyaLight/zcode-account-switcher/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/FedyaLight/zcode-account-switcher/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/FedyaLight/zcode-account-switcher/releases"><img alt="Release" src="https://img.shields.io/github/v/release/FedyaLight/zcode-account-switcher?include_prereleases"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+</p>
 
 A small native macOS app for switching between local ZCode account snapshots.
 
