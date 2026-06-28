@@ -10,6 +10,9 @@ let package = Package(
     products: [
         .executable(name: "ZCodeAccountSwitcher", targets: ["ZCodeAccountSwitcher"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3")
+    ],
     targets: [
         .target(
             name: "ZCodeAccountSwitcherCore",
@@ -17,7 +20,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "ZCodeAccountSwitcher",
-            dependencies: ["ZCodeAccountSwitcherCore"],
+            dependencies: [
+                "ZCodeAccountSwitcherCore",
+                .product(name: "Sparkle", package: "Sparkle")
+            ],
             path: "Sources/ZCodeAccountSwitcher"
         ),
         .testTarget(

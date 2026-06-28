@@ -40,7 +40,23 @@ ID certificate and notarization credentials are configured outside the repo.
    shasum -a 256 dist/ZCodeAccountSwitcher-*.dmg
    ```
 
-5. Upload the `.dmg` and `.sha256` file to the GitHub release.
+5. Generate the Sparkle appcast:
+
+   ```sh
+   ./script/generate_appcast.sh
+   ```
+
+   If signing with a local private key file instead of Keychain:
+
+   ```sh
+   SPARKLE_ED_KEY_FILE=.sparkle/ed25519.key ./script/generate_appcast.sh
+   ```
+
+   Commit the updated `appcast.xml`. Its EdDSA signature must match the exact
+   DMG uploaded to the GitHub release. Do not commit `.sparkle/` or exported
+   private keys.
+
+6. Upload the `.dmg` and `.sha256` file to the GitHub release.
 
 For non-notarized builds, include this install note in the release body:
 

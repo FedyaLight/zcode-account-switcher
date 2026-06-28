@@ -103,6 +103,25 @@ Release artifacts are written to `dist/`. The DMG uses a plain Finder layout
 with the app, the `Applications` shortcut, and the optional quarantine helper
 for unsigned builds.
 
+Generate the Sparkle appcast for the release DMG:
+
+```sh
+./script/generate_appcast.sh
+```
+
+Sparkle reads `appcast.xml` from the public repository. Update signing uses the
+`zcode-account-switcher` Sparkle EdDSA key from the local macOS Keychain; only
+the public key is stored in the app bundle.
+
+If the signing key is stored as a local file instead of Keychain, pass it
+explicitly:
+
+```sh
+SPARKLE_ED_KEY_FILE=.sparkle/ed25519.key ./script/generate_appcast.sh
+```
+
+Never commit `.sparkle/` or any exported Sparkle private key.
+
 ## Icon Source
 
 The app icon source lives in `Resources/AppIcon.icon`. The exported app icon is
@@ -128,11 +147,13 @@ Tests/
 Resources/
   AppIcon.icon/
   ZCodeAccountSwitcher.icns
+appcast.xml
 Xcode/
   Info.plist
 script/
   build_and_run.sh
   export_app_icon.sh
+  generate_appcast.sh
   package_release.sh
 ```
 

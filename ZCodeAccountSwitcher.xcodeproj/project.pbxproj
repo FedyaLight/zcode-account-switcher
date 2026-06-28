@@ -41,6 +41,7 @@
 		ABA001A07E44775719404BF0 /* ZCodePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7DFB6926CDB5D79E7403242 /* ZCodePaths.swift */; };
 		ACDA338D7A1D8AA56AF9762D /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8818594BC2EB0D889620F966 /* EmptyStateView.swift */; };
 		B37074AB08548DF90229FF39 /* Base64URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B8DACB8782195F49CFD37D /* Base64URL.swift */; };
+		BFFDE0E803C9C4E03047D915 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = FFC1BCC57B07164561D86E2E /* Sparkle */; };
 		C40559872AD17FFCAB4F0F83 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8462C4707B699A61F3B91BF5 /* ContentView.swift */; };
 		C5AA375840140A282BC3A62B /* ViewModeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187E7718DEB72CF70E5E2E39 /* ViewModeControl.swift */; };
 		C774897DAE5FFC75BCE22F7A /* SearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8DBBF2362BE605FFE08E61 /* SearchField.swift */; };
@@ -130,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B747CFBD23857E557CC83A3 /* libZCodeAccountSwitcherCore.a in Frameworks */,
+				BFFDE0E803C9C4E03047D915 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +309,7 @@
 			);
 			name = ZCodeAccountSwitcher;
 			packageProductDependencies = (
+				FFC1BCC57B07164561D86E2E /* Sparkle */,
 			);
 			productName = ZCodeAccountSwitcher;
 			productReference = E89A1B2F63BC0AC47D005242 /* ZCodeAccountSwitcher.app */;
@@ -378,6 +381,9 @@
 			);
 			mainGroup = 1EA7A60997626DDC46FE8706;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				524F19B8383E9D0CCF3D7534 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BFAD005692C1EC6C163BEDB3 /* Products */;
 			projectDirPath = "";
@@ -773,6 +779,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		524F19B8383E9D0CCF3D7534 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FFC1BCC57B07164561D86E2E /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 524F19B8383E9D0CCF3D7534 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5AE4E4BEAE4A41C8B7B4265E /* Project object */;
 }

@@ -15,6 +15,7 @@ APP_BUNDLE="$PACKAGE_DIR/$DISPLAY_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_MACOS="$APP_CONTENTS/MacOS"
 APP_RESOURCES="$APP_CONTENTS/Resources"
+APP_FRAMEWORKS="$APP_CONTENTS/Frameworks"
 APP_BINARY="$APP_MACOS/$APP_NAME"
 
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_TEMPLATE")"
@@ -24,7 +25,7 @@ SHA_PATH="$DMG_PATH.sha256"
 RW_DMG_PATH="$PACKAGE_DIR/$DMG_BASENAME-rw.dmg"
 
 rm -rf "$PACKAGE_DIR"
-mkdir -p "$APP_MACOS" "$APP_RESOURCES" "$DIST_DIR"
+mkdir -p "$APP_MACOS" "$APP_RESOURCES" "$APP_FRAMEWORKS" "$DIST_DIR"
 
 swift build -c release
 BUILD_BINARY="$(swift build -c release --show-bin-path)/$APP_NAME"
@@ -33,6 +34,16 @@ cp "$BUILD_BINARY" "$APP_BINARY"
 cp "$APP_ICON" "$APP_RESOURCES/ZCodeAccountSwitcher.icns"
 cp "$INFO_TEMPLATE" "$APP_CONTENTS/Info.plist"
 chmod +x "$APP_BINARY"
+
+SPARKLE_FRAMEWORK="$(find "$ROOT_DIR/.build/artifacts/sparkle" -path "*/Sparkle.framework" -type d | head -n 1 || true)"
+if [[ -z "$SPARKLE_FRAMEWORK" ]]; then
+  echo "Sparkle.framework was not found under .build/artifacts. Run swift package resolve and try again." >&2
+  exit 1
+fi
+ditto "$SPARKLE_FRAMEWORK" "$APP_FRAMEWORKS/Sparkle.framework"
+if ! otool -l "$APP_BINARY" | grep -q "@executable_path/../Frameworks"; then
+  install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_BINARY"
+fi
 
 /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $APP_NAME" "$APP_CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $BUNDLE_ID" "$APP_CONTENTS/Info.plist"
@@ -67,8 +78,14 @@ hdiutil create \
   -ov \
   "$RW_DMG_PATH"
 
-device="$(hdiutil attach "$RW_DMG_PATH" -readwrite -noverify -noautoopen | awk '/Apple_HFS|Apple_APFS/ { print $1 }' | tail -n 1)"
-mount_point="/Volumes/$DISPLAY_NAME"
+attach_output="$(hdiutil attach "$RW_DMG_PATH" -readwrite -noverify -noautoopen)"
+device="$(awk '/Apple_HFS|Apple_APFS/ { print $1 }' <<< "$attach_output" | tail -n 1)"
+mount_point="$(awk '/Apple_HFS|Apple_APFS/ { sub(/^[^[:space:]]+[[:space:]]+[^[:space:]]+[[:space:]]+/, ""); print }' <<< "$attach_output" | tail -n 1)"
+if [[ -z "$device" || -z "$mount_point" || ! -d "$mount_point" ]]; then
+  echo "Could not determine mounted DMG volume." >&2
+  echo "$attach_output" >&2
+  exit 1
+fi
 
 cleanup_mount() {
   if [[ -n "${device:-}" ]]; then

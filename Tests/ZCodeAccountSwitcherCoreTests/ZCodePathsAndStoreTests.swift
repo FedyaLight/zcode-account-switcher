@@ -2,6 +2,52 @@ import XCTest
 @testable import ZCodeAccountSwitcherCore
 
 final class ZCodePathsAndStoreTests: XCTestCase {
+    func testExportImportRoundTripWritesSnapshotsAndSkipsDuplicates() throws {
+        let sourceHome = try TestSupport.temporaryDirectory()
+        let destinationHome = try TestSupport.temporaryDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: sourceHome)
+            try? FileManager.default.removeItem(at: destinationHome)
+        }
+
+        let sourceStore = AccountStore(paths: ZCodePaths(home: sourceHome, environment: [:]))
+        let destinationStore = AccountStore(paths: ZCodePaths(home: destinationHome, environment: [:]))
+        let meta = AccountMeta(
+            id: "acct_1234",
+            shortId: "acct",
+            emailShortId: "acct_1234",
+            provider: "zai",
+            label: "Personal",
+            email: "person@example.com",
+            capturedAt: 1_000
+        )
+        let snapshot = AccountSnapshot(
+            credentials: #"{"oauth:active_provider":"zai","zcodejwttoken":"token"}"#,
+            config: #"{"provider":{"builtin:zai":{"enabled":true}}}"#
+        )
+
+        let firstImport = try sourceStore.importAccounts(AccountsExportPayload(exportedAt: 1_000, accounts: [
+            ExportedAccount(meta: meta, snapshot: snapshot)
+        ]))
+        XCTAssertEqual(firstImport.imported.map(\.id), ["acct_1234"])
+        XCTAssertTrue(firstImport.skipped.isEmpty)
+
+        let exported = try sourceStore.exportAccounts()
+        XCTAssertEqual(exported.accounts.count, 1)
+        XCTAssertEqual(exported.accounts.first?.meta, meta)
+        XCTAssertEqual(exported.accounts.first?.snapshot, snapshot)
+
+        let destinationImport = try destinationStore.importAccounts(exported)
+        XCTAssertEqual(destinationImport.imported.map(\.id), ["acct_1234"])
+        XCTAssertTrue(destinationImport.skipped.isEmpty)
+        XCTAssertEqual(try destinationStore.load(id: "acct_1234"), snapshot)
+
+        let duplicateImport = try destinationStore.importAccounts(exported)
+        XCTAssertTrue(duplicateImport.imported.isEmpty)
+        XCTAssertEqual(duplicateImport.skipped.count, 1)
+        XCTAssertEqual(duplicateImport.skipped.first?.id, "acct_1234")
+    }
+
     func testZCodePathsHonorSettingDataBaseDir() throws {
         let home = try TestSupport.temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: home) }

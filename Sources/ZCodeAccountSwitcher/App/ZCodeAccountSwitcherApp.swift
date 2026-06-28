@@ -1,11 +1,17 @@
 import AppKit
 import CoreServices
+import Sparkle
 import SwiftUI
 
 @main
 struct ZCodeAccountSwitcherApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var model = AccountAppModel()
+    private let updaterController = SPUStandardUpdaterController(
+        startingUpdater: true,
+        updaterDelegate: nil,
+        userDriverDelegate: nil
+    )
 
     var body: some Scene {
         WindowGroup("ZCode Account Switcher") {
@@ -21,6 +27,12 @@ struct ZCodeAccountSwitcherApp: App {
                 }
         }
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    updaterController.checkForUpdates(nil)
+                }
+            }
+
             CommandGroup(after: .newItem) {
                 Button("Refresh") {
                     Task { await model.refresh() }
