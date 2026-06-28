@@ -53,7 +53,19 @@ if [[ ! -d "$app_path" ]]; then
   exit 1
 fi
 
-/usr/bin/xattr -dr com.apple.quarantine "$app_path" 2>/dev/null || true
+error_file="$(/usr/bin/mktemp /tmp/zcode-account-switcher-xattr.XXXXXX)"
+if ! /usr/bin/xattr -dr com.apple.quarantine "$app_path" 2>"$error_file"; then
+  /bin/rm -f "$error_file"
+  /usr/bin/osascript -e 'display alert "Could not remove quarantine" message "Check file permissions for /Applications/ZCode Account Switcher.app, then run this helper again." as warning'
+  exit 1
+fi
+/bin/rm -f "$error_file"
+
+if /usr/bin/xattr -lr "$app_path" 2>/dev/null | /usr/bin/grep -q "com.apple.quarantine"; then
+  /usr/bin/osascript -e 'display alert "Quarantine is still present" message "macOS still reports quarantine metadata on the installed app. Check file permissions for /Applications/ZCode Account Switcher.app." as warning'
+  exit 1
+fi
+
 /usr/bin/open "$app_path"
 HELPER
 chmod +x "$HELPER_SCRIPT"

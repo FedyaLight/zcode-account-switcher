@@ -46,14 +46,16 @@ ID certificate and notarization credentials are configured outside the repo.
    ./script/generate_appcast.sh
    ```
 
-   If signing with a local private key file instead of Keychain:
+   The script prefers the ignored local `.sparkle/ed25519.key` when it exists.
+   If signing with a different local private key file:
 
    ```sh
    SPARKLE_ED_KEY_FILE=.sparkle/ed25519.key ./script/generate_appcast.sh
    ```
 
    Commit the updated `appcast.xml`. Its EdDSA signature must match the exact
-   DMG uploaded to the GitHub release. Do not commit `.sparkle/` or exported
+   DMG uploaded to the GitHub release, and its signing key must match the
+   `SUPublicEDKey` in `Xcode/Info.plist`. Do not commit `.sparkle/` or exported
    private keys.
 
 6. Upload the `.dmg` and `.sha256` file to the GitHub release.

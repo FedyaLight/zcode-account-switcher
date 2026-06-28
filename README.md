@@ -69,6 +69,10 @@ xattr -dr com.apple.quarantine "/Applications/ZCode Account Switcher.app"
 open "/Applications/ZCode Account Switcher.app"
 ```
 
+This removes quarantine metadata from that installed app bundle recursively.
+It persists for that copy of the app. If you replace the app with a newly
+downloaded non-notarized build, run the helper again for the new copy.
+
 Use the `xattr` command only for builds you downloaded from a trusted release
 page or built yourself.
 
@@ -115,7 +119,8 @@ Generate the Sparkle appcast for the release DMG:
 ```
 
 Sparkle reads `appcast.xml` from the public repository. Update signing uses the
-`zcode-account-switcher` Sparkle EdDSA key from the local macOS Keychain; only
+ignored `.sparkle/ed25519.key` file when it exists, otherwise the
+`zcode-account-switcher` Sparkle EdDSA key from the local macOS Keychain. Only
 the public key is stored in the app bundle.
 
 If the signing key is stored as a local file instead of Keychain, pass it

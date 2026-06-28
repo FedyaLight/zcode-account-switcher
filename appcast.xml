@@ -10,13 +10,13 @@
     <item>
       <title>Version 1.0.4</title>
       <sparkle:releaseNotesLink>https://github.com/FedyaLight/zcode-account-switcher/releases/tag/v1.0.4</sparkle:releaseNotesLink>
-      <pubDate>Sun, 28 Jun 2026 19:42:53 +0000</pubDate>
+      <pubDate>Sun, 28 Jun 2026 20:11:39 +0000</pubDate>
       <enclosure
         url="https://github.com/FedyaLight/zcode-account-switcher/releases/download/v1.0.4/ZCodeAccountSwitcher-1.0.4-macOS.dmg"
         sparkle:version="5"
         sparkle:shortVersionString="1.0.4"
-        sparkle:edSignature="0isQ+PMUStE6nJNGi5gTtCRPwIfjNUE9NcLPcUnMobPAfzqBG9sLjvzuSDLP1d8GmQLv9PJv2RZtp6nzIal8BA=="
-        length="3573894"
+        sparkle:edSignature="5sCYoJV4qziHtbAgxjf2zo/wGMsA/aIXjT+XnEwRLIj9RRBvd5BsTQAYisPK8/MhvPwudzCkpd2+WdwQCkMYDg=="
+        length="3574517"
         type="application/octet-stream" />
     </item>
   </channel>
