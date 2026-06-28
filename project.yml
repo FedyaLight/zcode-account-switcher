@@ -1,0 +1,60 @@
+name: ZCodeAccountSwitcher
+options:
+  bundleIdPrefix: com.zcode
+  deploymentTarget:
+    macOS: "13.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  ZCodeAccountSwitcherCore:
+    type: library.static
+    platform: macOS
+    sources:
+      - path: Sources/ZCodeAccountSwitcherCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zcode.account-switcher.core
+        PRODUCT_NAME: ZCodeAccountSwitcherCore
+        SKIP_INSTALL: YES
+  ZCodeAccountSwitcher:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/ZCodeAccountSwitcher
+      - path: Resources/ZCodeAccountSwitcher.icns
+        buildPhase: resources
+    dependencies:
+      - target: ZCodeAccountSwitcherCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zcode.account-switcher.mac
+        PRODUCT_NAME: ZCodeAccountSwitcher
+        INFOPLIST_FILE: Xcode/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+  ZCodeAccountSwitcherCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/ZCodeAccountSwitcherCoreTests
+    dependencies:
+      - target: ZCodeAccountSwitcherCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zcode.account-switcher.core-tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  ZCodeAccountSwitcher:
+    build:
+      targets:
+        ZCodeAccountSwitcher: all
+        ZCodeAccountSwitcherCoreTests: [test]
+    run:
+      config: Debug
+      executable: ZCodeAccountSwitcher
+    test:
+      config: Debug
+      targets:
+        - ZCodeAccountSwitcherCoreTests
