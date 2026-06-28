@@ -30,6 +30,7 @@ final class ZCodePathsAndStoreTests: XCTestCase {
             ExportedAccount(meta: meta, snapshot: snapshot)
         ]))
         XCTAssertEqual(firstImport.imported.map(\.id), ["acct_1234"])
+        XCTAssertTrue(firstImport.updated.isEmpty)
         XCTAssertTrue(firstImport.skipped.isEmpty)
 
         let exported = try sourceStore.exportAccounts()
@@ -39,13 +40,20 @@ final class ZCodePathsAndStoreTests: XCTestCase {
 
         let destinationImport = try destinationStore.importAccounts(exported)
         XCTAssertEqual(destinationImport.imported.map(\.id), ["acct_1234"])
+        XCTAssertTrue(destinationImport.updated.isEmpty)
         XCTAssertTrue(destinationImport.skipped.isEmpty)
         XCTAssertEqual(try destinationStore.load(id: "acct_1234"), snapshot)
 
         let duplicateImport = try destinationStore.importAccounts(exported)
         XCTAssertTrue(duplicateImport.imported.isEmpty)
+        XCTAssertTrue(duplicateImport.updated.isEmpty)
         XCTAssertEqual(duplicateImport.skipped.count, 1)
         XCTAssertEqual(duplicateImport.skipped.first?.id, "acct_1234")
+
+        let overwriteImport = try destinationStore.importAccounts(exported, overwrite: true)
+        XCTAssertTrue(overwriteImport.imported.isEmpty)
+        XCTAssertEqual(overwriteImport.updated.map(\.id), ["acct_1234"])
+        XCTAssertTrue(overwriteImport.skipped.isEmpty)
     }
 
     func testZCodePathsHonorSettingDataBaseDir() throws {

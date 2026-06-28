@@ -33,13 +33,15 @@ extension AccountAppModel {
             guard response == .OK else { return }
 
             var totalImported = 0
+            var totalUpdated = 0
             var totalSkipped = 0
             var failureMessages: [String] = []
             for url in panel.urls {
                 do {
                     let payload = try JSONSupport.readDecodable(AccountsExportPayload.self, from: url)
-                    let result = try store.importAccounts(payload)
+                    let result = try store.importAccounts(payload, overwrite: true)
                     totalImported += result.imported.count
+                    totalUpdated += result.updated.count
                     totalSkipped += result.skipped.count
                     if let skipped = result.skipped.first {
                         failureMessages.append("\(skipped.id ?? url.lastPathComponent): \(skipped.reason)")
@@ -50,8 +52,8 @@ extension AccountAppModel {
                 }
             }
             await reloadStatusAndList()
-            let summary = "Imported \(totalImported), skipped \(totalSkipped)."
-            if totalImported == 0, totalSkipped > 0 {
+            let summary = "Imported \(totalImported), updated \(totalUpdated), skipped \(totalSkipped)."
+            if totalImported + totalUpdated == 0, totalSkipped > 0 {
                 showToast(.error, [summary, failureMessages.first].compactMap { $0 }.joined(separator: " "))
             } else if totalSkipped > 0 {
                 showToast(.info, [summary, failureMessages.first].compactMap { $0 }.joined(separator: " "))

@@ -189,6 +189,7 @@ public final class AccountStore {
     public func importAccounts(_ payload: AccountsExportPayload, overwrite: Bool = false) throws -> ImportResult {
         try ensureStore()
         var imported: [AccountMeta] = []
+        var updated: [AccountMeta] = []
         var skipped: [(id: String?, reason: String)] = []
 
         for account in payload.accounts {
@@ -202,9 +203,9 @@ public final class AccountStore {
                 _ = try JSONSupport.parseDictionary(account.snapshot.credentials)
                 _ = try JSONSupport.parseDictionary(account.snapshot.config)
 
-                if !overwrite,
-                   FileManager.default.fileExists(atPath: metadataURL(id: id).path) ||
-                    FileManager.default.fileExists(atPath: snapshotURL(id: id).path) {
+                let exists = FileManager.default.fileExists(atPath: metadataURL(id: id).path) ||
+                    FileManager.default.fileExists(atPath: snapshotURL(id: id).path)
+                if exists, !overwrite {
                     skipped.append((id: id, reason: "Already exists."))
                     continue
                 }
@@ -213,13 +214,17 @@ public final class AccountStore {
                 meta.id = id
                 try JSONSupport.writeEncodable(account.snapshot, to: snapshotURL(id: id), pretty: false)
                 try JSONSupport.writeEncodable(meta, to: metadataURL(id: id), pretty: true)
-                imported.append(meta)
+                if exists {
+                    updated.append(meta)
+                } else {
+                    imported.append(meta)
+                }
             } catch {
                 skipped.append((id: account.meta.id, reason: error.localizedDescription))
             }
         }
 
-        return ImportResult(imported: imported, skipped: skipped)
+        return ImportResult(imported: imported, updated: updated, skipped: skipped)
     }
 
     public func readSnapshot() throws -> AccountSnapshot {

@@ -11,5 +11,6 @@ public struct SwitchResult: Equatable {
 
 public struct ImportResult {
     public var imported: [AccountMeta]
+    public var updated: [AccountMeta]
     public var skipped: [(id: String?, reason: String)]
 }
