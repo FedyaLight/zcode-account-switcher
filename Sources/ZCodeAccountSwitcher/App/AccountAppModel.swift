@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import ZCodeAccountSwitcherCore
 
@@ -14,6 +15,7 @@ final class AccountAppModel: ObservableObject {
     @Published var oauthSession: OAuthSession?
 
     let store: AccountStore
+    var activeImportPanel: NSOpenPanel?
     lazy var oauthService = OAuthService(accountStore: store)
     var oauthCallbackServer: OAuthCallbackServer?
 

@@ -74,7 +74,7 @@ struct ContentView: View {
             .help("Refresh")
 
             Button {
-                Task { await model.importAccounts() }
+                model.presentImportPanel()
             } label: {
                 Label("Import", systemImage: "square.and.arrow.down")
             }

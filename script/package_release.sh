@@ -3,20 +3,15 @@ set -euo pipefail
 
 APP_NAME="ZCodeAccountSwitcher"
 DISPLAY_NAME="ZCode Account Switcher"
-BUNDLE_ID="com.zcode.account-switcher.mac"
-MIN_SYSTEM_VERSION="13.0"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INFO_TEMPLATE="$ROOT_DIR/Xcode/Info.plist"
-APP_ICON="$ROOT_DIR/Resources/ZCodeAccountSwitcher.icns"
 DIST_DIR="$ROOT_DIR/dist"
 PACKAGE_DIR="$ROOT_DIR/.build/release-package"
 APP_BUNDLE="$PACKAGE_DIR/$DISPLAY_NAME.app"
-APP_CONTENTS="$APP_BUNDLE/Contents"
-APP_MACOS="$APP_CONTENTS/MacOS"
-APP_RESOURCES="$APP_CONTENTS/Resources"
-APP_FRAMEWORKS="$APP_CONTENTS/Frameworks"
-APP_BINARY="$APP_MACOS/$APP_NAME"
+PROJECT_FILE="$ROOT_DIR/ZCodeAccountSwitcher.xcodeproj"
+DERIVED_DATA="$ROOT_DIR/.build/release-derived-data"
+BUILT_APP="$DERIVED_DATA/Build/Products/Release/$APP_NAME.app"
 
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_TEMPLATE")"
 DMG_BASENAME="$APP_NAME-$VERSION-macOS"
@@ -25,31 +20,24 @@ SHA_PATH="$DMG_PATH.sha256"
 RW_DMG_PATH="$PACKAGE_DIR/$DMG_BASENAME-rw.dmg"
 
 rm -rf "$PACKAGE_DIR"
-mkdir -p "$APP_MACOS" "$APP_RESOURCES" "$APP_FRAMEWORKS" "$DIST_DIR"
+mkdir -p "$PACKAGE_DIR" "$DIST_DIR"
 
-swift build -c release
-BUILD_BINARY="$(swift build -c release --show-bin-path)/$APP_NAME"
-
-cp "$BUILD_BINARY" "$APP_BINARY"
-cp "$APP_ICON" "$APP_RESOURCES/ZCodeAccountSwitcher.icns"
-cp "$INFO_TEMPLATE" "$APP_CONTENTS/Info.plist"
-chmod +x "$APP_BINARY"
-
-SPARKLE_FRAMEWORK="$(find "$ROOT_DIR/.build/artifacts/sparkle" -path "*/Sparkle.framework" -type d | head -n 1 || true)"
-if [[ -z "$SPARKLE_FRAMEWORK" ]]; then
-  echo "Sparkle.framework was not found under .build/artifacts. Run swift package resolve and try again." >&2
-  exit 1
-fi
-ditto "$SPARKLE_FRAMEWORK" "$APP_FRAMEWORKS/Sparkle.framework"
-if ! otool -l "$APP_BINARY" | grep -q "@executable_path/../Frameworks"; then
-  install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_BINARY"
+if [[ ! -d "$PROJECT_FILE" ]]; then
+  if ! command -v xcodegen >/dev/null 2>&1; then
+    echo "ZCodeAccountSwitcher.xcodeproj is missing. Install XcodeGen or run xcodegen generate first." >&2
+    exit 1
+  fi
+  (cd "$ROOT_DIR" && xcodegen generate)
 fi
 
-/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $APP_NAME" "$APP_CONTENTS/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $BUNDLE_ID" "$APP_CONTENTS/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :LSMinimumSystemVersion $MIN_SYSTEM_VERSION" "$APP_CONTENTS/Info.plist"
+xcodebuild build \
+  -project "$PROJECT_FILE" \
+  -scheme "$APP_NAME" \
+  -configuration Release \
+  -destination 'platform=macOS' \
+  -derivedDataPath "$DERIVED_DATA"
 
-codesign --force --deep --sign - "$APP_BUNDLE"
+ditto "$BUILT_APP" "$APP_BUNDLE"
 codesign --verify --deep --strict "$APP_BUNDLE"
 
 HELPER_NAME="Run to Remove Quarantine.command"
