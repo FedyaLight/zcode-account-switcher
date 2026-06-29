@@ -21,7 +21,7 @@
       content="Save local ZCode account snapshots and switch between ZCode accounts on macOS."
     >
     <meta property="og:url" content="https://fedyalight.github.io/zcode-account-switcher/">
-    <meta property="og:image" content="https://fedyalight.github.io/zcode-account-switcher/assets/screenshot.png">
+    <meta property="og:image" content="https://fedyalight.github.io/zcode-account-switcher/assets/app-window.png">
     <meta property="og:image:alt" content="ZCode Account Switcher macOS app showing saved accounts.">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -30,7 +30,7 @@
       name="twitter:description"
       content="A native macOS app for switching between local ZCode account snapshots."
     >
-    <meta name="twitter:image" content="https://fedyalight.github.io/zcode-account-switcher/assets/screenshot.png">
+    <meta name="twitter:image" content="https://fedyalight.github.io/zcode-account-switcher/assets/app-window.png">
     <meta name="theme-color" content="#f5f7f1">
 
     <script type="application/ld+json">
@@ -43,7 +43,7 @@
         "description": "A native macOS app for saving local ZCode account snapshots and switching between ZCode accounts.",
         "url": "https://fedyalight.github.io/zcode-account-switcher/",
         "image": "https://fedyalight.github.io/zcode-account-switcher/assets/icon.png",
-        "screenshot": "https://fedyalight.github.io/zcode-account-switcher/assets/screenshot.png",
+        "screenshot": "https://fedyalight.github.io/zcode-account-switcher/assets/app-window.png",
         "downloadUrl": "https://github.com/FedyaLight/zcode-account-switcher/releases/latest",
         "softwareVersion": "1.0.5",
         "datePublished": "2026-06-28",
@@ -72,7 +72,8 @@
         --ink: #17211c;
         --muted: #5f6b64;
         --line: #d9ded8;
-        --green: #1c7c54;
+        --green: #0f7a4a;
+        --green-dark: #095f38;
         --blue: #2456a6;
         --amber: #b46b19;
         --shadow: 0 18px 48px rgba(31, 38, 34, 0.14);
@@ -195,6 +196,17 @@
         color: #fff;
       }
 
+      .nav-links .button-primary,
+      .button.button-primary {
+        color: #fff;
+      }
+
+      .button-primary:hover {
+        background: var(--green-dark);
+        border-color: var(--green-dark);
+        color: #fff;
+      }
+
       .button-secondary {
         background: var(--surface);
         border-color: var(--line);
@@ -209,17 +221,13 @@
       .hero {
         position: relative;
         overflow: hidden;
-        min-height: min(640px, calc(100vh - 160px));
-        border-bottom: 1px solid var(--line);
-        background:
-          linear-gradient(180deg, rgba(248, 247, 242, 0.97) 0%, rgba(248, 247, 242, 0.86) 48%, rgba(248, 247, 242, 0.5) 100%),
-          url("assets/screenshot.png") center calc(100% + 42px) / min(1120px, 94vw) auto no-repeat;
+        background: #fbfaf6;
       }
 
       .hero-inner {
         width: min(1120px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 72px 0 148px;
+        padding: 70px 0 44px;
       }
 
       .eyebrow {
@@ -264,6 +272,30 @@
         margin: 18px 0 0;
         color: var(--muted);
         font-size: 0.95rem;
+      }
+
+      .product-preview {
+        background: linear-gradient(180deg, #fbfaf6 0%, #f0f5ef 100%);
+      }
+
+      .product-preview-inner {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 0 0 64px;
+      }
+
+      .product-shot {
+        margin: 0;
+        overflow: hidden;
+        background: #151b18;
+        border: 1px solid rgba(23, 33, 28, 0.18);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .product-shot img {
+        width: 100%;
+        height: auto;
       }
 
       main {
@@ -329,15 +361,6 @@
 
       .feature-card:nth-child(3) strong {
         color: var(--amber);
-      }
-
-      .product-shot {
-        margin-top: 28px;
-        overflow: hidden;
-        background: #edf1ec;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        box-shadow: var(--shadow);
       }
 
       .facts {
@@ -445,14 +468,12 @@
           display: none;
         }
 
-        .hero {
-          min-height: auto;
-          background-position: center calc(100% + 36px);
-          background-size: 960px auto;
+        .hero-inner {
+          padding: 52px 0 32px;
         }
 
-        .hero-inner {
-          padding: 56px 0 150px;
+        .product-preview-inner {
+          padding-bottom: 48px;
         }
 
         .feature-grid,
@@ -479,10 +500,6 @@
 
         .nav-links .button {
           padding: 9px 11px;
-        }
-
-        .hero-inner {
-          padding-bottom: 126px;
         }
 
         h1 {
@@ -526,6 +543,20 @@
     </section>
 
     <main id="main">
+      <section class="product-preview" aria-label="Product screenshot">
+        <div class="product-preview-inner">
+          <figure class="product-shot">
+            <img
+              src="assets/app-window.png"
+              alt="ZCode Account Switcher showing saved ZCode accounts and switching controls."
+              width="1962"
+              height="1120"
+              fetchpriority="high"
+            >
+          </figure>
+        </div>
+      </section>
+
       <section id="features" aria-labelledby="features-title">
         <div class="section-inner">
           <div class="section-heading">
@@ -550,15 +581,6 @@
             </article>
           </div>
 
-          <figure class="product-shot">
-            <img
-              src="assets/screenshot.png"
-              alt="ZCode Account Switcher showing saved ZCode accounts, status, and privacy mode."
-              width="2092"
-              height="1514"
-              loading="lazy"
-            >
-          </figure>
         </div>
       </section>
 
