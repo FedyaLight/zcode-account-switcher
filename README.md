@@ -10,6 +10,11 @@
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
 </p>
 
+<p align="center">
+  <a href="https://fedyalight.github.io/zcode-account-switcher/">Website</a> ·
+  <a href="https://github.com/FedyaLight/zcode-account-switcher/releases/latest">Download for macOS</a>
+</p>
+
 A small native macOS app for switching between local ZCode account snapshots.
 
 The app saves the current ZCode login state, lets you keep several local account
